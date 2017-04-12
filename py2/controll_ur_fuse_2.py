@@ -52,6 +52,19 @@ class controll():
             break
         time.sleep(5)
 
+    def servo(self,a,b,c,d,e,f):
+        a=str(a*2*3.14/360)
+        b=str(b*2*3.14/360)
+        c=str(c*2*3.14/360)
+        d=str(d*2*3.14/360)
+        e=str(e*2*3.14/360)
+        f=str(f*2*3.14/360)
+        self.s.connect((self.HOST, self.PORT))
+        mm = "servoj([" + a + "," + b + "," + c + "," + d + "," + e + "," + f + "],a=1,v=0.5)" + "\n"
+        self.s.send(mm.encode('utf-8'))
+        time.sleep(10)
+
+
     def read_pos(self):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -154,6 +167,117 @@ class controll():
                 reg_405_f = float(reg_405_i)/1000*-1
             print "Rz = ",reg_405_f
             ya = reg_405_f
+
+            time.sleep(5.00)
+            home_status = 1
+            program_run = 0
+            s.close()
+        except socket.error as socketerror:
+            print("Error: ", socketerror)
+        return (x,y,z,ro,pi,ya)
+
+    def read_ang(self):
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(10)
+            s.connect((self.HOST, self.PORT_502))
+            time.sleep(0.05)
+            print ""
+            reg_400 = ""
+            s.send ("\x00\x04\x00\x00\x00\x06\x00\x03\x01\x90\x00\x01") #request data from register 128-133 (cartisian data)
+            reg_270 = s.recv(1024)
+            reg_270 = reg_270.replace ("\x00\x04\x00\x00\x00\x05\x00\x03\x02", "")
+            reg_270 = reg_270.encode("hex") #convert the data from \x hex notation to plain hex
+            if reg_270 == "":
+                reg_270 = "0000"
+            reg_270_i = int(reg_270,16)
+            if reg_270_i < 32768:
+                reg_270_f = float(reg_270_i)/10
+            elif reg_270_i > 32767:
+                reg_270_i = 65535 - reg_270_i
+                reg_270_f = float(reg_270_i)/10*-1
+            print "X = ",reg_270_f
+            x = reg_270_f
+
+            reg_401 = ""
+            s.send ("\x00\x04\x00\x00\x00\x06\x00\x03\x01\x91\x00\x01") #request data from register 128-133 (cartisian data)
+            reg_271 = s.recv(1024)
+            reg_271 = reg_271.replace ("\x00\x04\x00\x00\x00\x05\x00\x03\x02", "")
+            reg_271 = reg_271.encode("hex") #convert the data from \x hex notation to plain hex
+            if reg_271 == "":
+                reg_271 = "0000"
+            reg_271_i = int(reg_271,16)
+            if reg_271_i < 32768:
+                reg_271_f = float(reg_271_i)/10
+            elif reg_271_i > 32767:
+                reg_271_i = 65535 - reg_271_i
+                reg_271_f = float(reg_271_i)/10*-1
+            print "Y = ",reg_271_f
+            y = reg_271_f
+
+            reg_402 = ""
+            s.send ("\x00\x04\x00\x00\x00\x06\x00\x03\x01\x92\x00\x01") #request data from register 128-133 (cartisian data)
+            reg_272 = s.recv(1024)
+            reg_272 = reg_272.replace ("\x00\x04\x00\x00\x00\x05\x00\x03\x02", "")
+            reg_272 = reg_272.encode("hex") #convert the data from \x hex notation to plain hex
+            if reg_272 == "":
+                reg_272 = "0000"
+            reg_272_i = int(reg_272,16)
+            if reg_272_i < 32768:
+                reg_272_f = float(reg_272_i)/10
+            if reg_272_i > 32767:
+                reg_272_i = 65535 - reg_272_i
+                reg_272_f = float(reg_272_i)/10*-1
+            print "Z = ",reg_272_f
+            z = reg_272_f
+
+            reg_403 = ""
+            s.send ("\x00\x04\x00\x00\x00\x06\x00\x03\x01\x93\x00\x01") #request data from register 128-133 (cartisian data)
+            reg_273 = s.recv(1024)
+            reg_273 = reg_273.replace ("\x00\x04\x00\x00\x00\x05\x00\x03\x02", "")
+            reg_273 = reg_273.encode("hex") #convert the data from \x hex notation to plain hex
+            if reg_273 == "":
+                reg_273 = "0000"
+            reg_273_i = int(reg_273,16)
+            if reg_273_i < 32768:
+                reg_273_f = float(reg_273_i)/1000
+            if reg_273_i > 32767:
+                reg_273_i = 65535 - reg_273_i
+                reg_273_f = float(reg_273_i)/1000*-1
+            print "Rx = ",reg_273_f
+            ro = reg_273_f
+
+            reg_404 = ""
+            s.send ("\x00\x04\x00\x00\x00\x06\x00\x03\x01\x94\x00\x01") #request data from register 128-133 (cartisian data)
+            reg_274 = s.recv(1024)
+            reg_274 = reg_274.replace ("\x00\x04\x00\x00\x00\x05\x00\x03\x02", "")
+            reg_274 = reg_274.encode("hex") #convert the data from \x hex notation to plain hex
+            if reg_274 == "":
+                reg_274 = "0000"
+            reg_274_i = int(reg_274,16)
+            if reg_274_i < 32768:
+                reg_274_f = float(reg_274_i)/1000
+            if reg_274_i > 32767:
+                reg_274_i = 65535 - reg_274_i
+                reg_274_f = float(reg_274_i)/1000*-1
+            print "Ry = ",reg_274_f
+            pi = reg_274_f
+
+            reg_405 = ""
+            s.send ("\x00\x04\x00\x00\x00\x06\x00\x03\x01\x95\x00\x01") #request data from register 128-133 (cartisian data)
+            reg_275 = s.recv(1024)
+            reg_275 = reg_275.replace ("\x00\x04\x00\x00\x00\x05\x00\x03\x02", "")
+            reg_275 = reg_275.encode("hex") #convert the data from \x hex notation to plain hex
+            if reg_275 == "":
+                reg_275 = "0000"
+            reg_275_i = int(reg_275,16)
+            if reg_275_i < 32768:
+                reg_275_f = float(reg_275_i)/1000
+            if reg_275_i > 32767:
+                reg_275_i = 65535 - reg_275_i
+                reg_275_f = float(reg_275_i)/1000*-1
+            print "Rz = ",reg_275_f
+            ya = reg_275_f
 
             time.sleep(5.00)
             home_status = 1
@@ -375,4 +499,7 @@ class path_action(controll):
 # # controll("R").move(582,-45,-294,1.5,0.58,-0.66)
 # time.sleep(10)
 # controll("R").drop()
-controll("R").move(-174,-549,149,1.5,0.58,-0.66)
+# controll("R").move(-174,-549,149,1.5,0.58,-0.66)
+
+# controll("L").servo(100,-72,110,-41,108,-45) #**not yet
+controll("L").read_ang()

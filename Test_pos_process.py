@@ -12,7 +12,8 @@ class Color(Enum):
     GREEN = 2
     BLUE = 3
     ORANGE = 4
-class control():
+
+class control:
     def move(self,x,y,z):
         x = str(x / 1000.0)
         y = str(y / 1000.0)
@@ -174,7 +175,7 @@ PORT = 30002              # The same port as used by the server
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 
-control.move(cpPosX,cpPosY,cpPosZ)
+control().move(cpPosX,cpPosY,cpPosZ)
 time.sleep(4)
 xPos = 0
 yPos = 0
